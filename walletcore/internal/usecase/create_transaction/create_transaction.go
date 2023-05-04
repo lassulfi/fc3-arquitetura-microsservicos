@@ -1,29 +1,39 @@
-package createtransaction
+package create_transaction
 
 import (
 	"github.com/lassulfi/fc-ms-wallet/internal/entity"
 	"github.com/lassulfi/fc-ms-wallet/internal/gateway"
+	"github.com/lassulfi/fc-ms-wallet/pkg/events"
 )
 
 type CreateTransactionInputDTO struct {
-	AccountIDFrom string
-	AccountIDTo   string
-	Amount        float64
+	AccountIDFrom string  `json:"account_id_from"`
+	AccountIDTo   string  `json:"account_id_to"`
+	Amount        float64 `json: "amount"`
 }
 
 type CreateTransactionOutputDTO struct {
-	ID string
+	ID string `json:"id"`
 }
 
 type CreateTransactionUseCase struct {
 	TransactionGateway gateway.TransactionGateway
 	AccountGateway     gateway.AccountGateway
+	EventDispatcher    events.EventDispatcherInterface
+	TransactionCreated events.EventInterface
 }
 
-func NewCreateTransactionUseCase(t gateway.TransactionGateway, a gateway.AccountGateway) *CreateTransactionUseCase {
+func NewCreateTransactionUseCase(
+	t gateway.TransactionGateway,
+	a gateway.AccountGateway,
+	e events.EventDispatcherInterface,
+	tc events.EventInterface,
+) *CreateTransactionUseCase {
 	return &CreateTransactionUseCase{
 		TransactionGateway: t,
 		AccountGateway:     a,
+		EventDispatcher:    e,
+		TransactionCreated: tc,
 	}
 }
 
@@ -44,7 +54,12 @@ func (uc *CreateTransactionUseCase) Execute(input CreateTransactionInputDTO) (*C
 	if err != nil {
 		return nil, err
 	}
-	return &CreateTransactionOutputDTO{
+	output := &CreateTransactionOutputDTO{
 		ID: transaction.ID,
-	}, nil
+	}
+
+	uc.TransactionCreated.SetPayload(output)
+	uc.EventDispatcher.Dispatch(uc.TransactionCreated)
+
+	return output, nil
 }
