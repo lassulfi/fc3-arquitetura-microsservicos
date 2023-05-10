@@ -2,8 +2,8 @@ POST http://localhost:3000/clients
 Content-Type: application/json
 
 {
-    "name": "Jane Doe",
-    "email": "jane@j.com"
+    "name": "John Doe",
+    "email": "john@j.com"
 }
 
 ###
@@ -12,7 +12,7 @@ POST http://localhost:3000/accounts
 Content-Type: application/json
 
 {
-    "client_id": "f6ce068e-4d0d-4a9b-b253-a0a035db76eb"
+    "client_id": "5404e754-c6ca-4457-a43d-a3bb95e9aaff"
 }
 
 ### 
@@ -21,7 +21,7 @@ POST http://localhost:3000/transactions
 Content-Type: application/json
 
 {
-    "account_id_from": "d683df34-178d-4d87-98b7-bd7c52a9ab02",
-    "account_id_to": "da747d48-d0e5-435b-bf4c-4422dab475b0",
-    "amount": 50
+    "account_id_from": "7ff8c654-898e-4c44-9c5d-ccda5da8cc5a",
+    "account_id_to": "c840a1d5-591f-4dd9-bbaf-480a1d414cfa",
+    "amount": 500000
 }
