@@ -1,6 +1,7 @@
 package events
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -19,7 +20,7 @@ func (e *TestEvent) GetName() string {
 }
 
 func (e *TestEvent) SetPayload(payload interface{}) {
-
+	e.Payload = payload
 }
 
 func (e *TestEvent) GetPayload() interface{} {
@@ -34,7 +35,7 @@ type TestEventHandler struct {
 	ID int
 }
 
-func (h *TestEventHandler) Handle(event EventInterface) {}
+func (h *TestEventHandler) Handle(event EventInterface, wg *sync.WaitGroup) {}
 
 type EventDispatcherTestSuite struct {
 	suite.Suite
@@ -153,22 +154,30 @@ type MockHandler struct {
 	mock.Mock
 }
 
-func (m *MockHandler) Handle(event EventInterface) {
+func (m *MockHandler) Handle(event EventInterface, wg *sync.WaitGroup) {
 	m.Called(event)
+	wg.Done()
 }
 
 func (suite *EventDispatcherTestSuite) TestEventInterfaceDispatcher_Dispatch() {
-	eh := &MockHandler{}
-	eh.On("Handle", &suite.event1)
+	eh1 := &MockHandler{}
+	eh1.On("Handle", &suite.event1)
 
-	err := suite.eventDispatcher.Register(suite.event1.GetName(), eh)
+	eh2 := &MockHandler{}
+	eh2.On("Handle", &suite.event1)
+
+	err := suite.eventDispatcher.Register(suite.event1.GetName(), eh1)
+	suite.Nil(err)
+	err = suite.eventDispatcher.Register(suite.event1.GetName(), eh2)
 	suite.Nil(err)
 
 	err = suite.eventDispatcher.Dispatch(&suite.event1)
 	suite.Nil(err)
 
-	eh.AssertExpectations(suite.T())
-	eh.AssertNumberOfCalls(suite.T(), "Handle", 1)
+	eh1.AssertExpectations(suite.T())
+	eh2.AssertExpectations(suite.T())
+	eh1.AssertNumberOfCalls(suite.T(), "Handle", 1)
+	eh2.AssertNumberOfCalls(suite.T(), "Handle", 1)
 }
 
 func TestSuite(t *testing.T) {
