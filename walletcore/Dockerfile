@@ -1,7 +1,19 @@
-FROM golang:1.20
+FROM golang:1.20 AS builder
 
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y librdkafka-dev
 
-CMD [ "tail", "-f", "/dev/null" ]
+COPY go.mod .
+
+COPY go.sum .
+
+RUN go mod download
+
+COPY . .
+
+RUN go build -o /build/main ./cmd/walletcore/main.go
+
+EXPOSE 8080
+
+CMD ["./build/main"]
