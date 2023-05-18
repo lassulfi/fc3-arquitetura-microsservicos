@@ -2,9 +2,10 @@ version: '3'
 
 services:
   goapp:
-    build: .
+    build: 
+      context: walletcore
     volumes:
-      - .:/app
+      - ./walletcore:/app
     ports:
       - 8080:8080
     depends_on:
