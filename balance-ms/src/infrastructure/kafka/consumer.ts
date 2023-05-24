@@ -1,22 +1,38 @@
-import { Consumer } from "kafkajs";
+import { Consumer, EachMessagePayload } from "kafkajs";
+import { SimpleConsumer } from "./consumer.interface";
+import { UseCase } from "../../internal/usecase/usecase.interface";
 
-export interface SimpleConsumer {
-    connect(): Promise<void>;
-    handle(message: any): Promise<void>;
-    disconnect(): Promise<void>
+type KafkaConsumerProps = {
+    consumer: Consumer,
+    topics: string[],
+    useCase: UseCase<any, any>,
 }
 
 export class KafkaConsumer implements SimpleConsumer {
-    private readonly consumer: Consumer
+    private readonly _consumer: Consumer;
+    private _topics: string[];
+    private _useCase: UseCase<any, any>
 
-    connect(): Promise<void> {
-        throw new Error("Method not implemented.");
+    constructor({consumer, topics, useCase}: KafkaConsumerProps) {
+        this._consumer = consumer;
+        this._topics = topics;
+        this._useCase = useCase;
     }
-    handle(message: any): Promise<void> {
-        throw new Error("Method not implemented.");
+
+    async connect(): Promise<void> {
+        await this._consumer.connect();
+
+        await this._consumer.subscribe({topics: this._topics})
+
+        await this._consumer.run({eachMessage: payload => this.handle(payload)})
     }
-    disconnect(): Promise<void> {
-        throw new Error("Method not implemented.");
+
+    async handle({message}: EachMessagePayload): Promise<void> {
+         await this._useCase.execute(message);
+    }
+
+    async disconnect(): Promise<void> {
+        await this._consumer.disconnect();
     }
 
 }

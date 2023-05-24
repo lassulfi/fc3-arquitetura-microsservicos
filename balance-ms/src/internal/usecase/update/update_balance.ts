@@ -1,9 +1,11 @@
 
 import BalanceFactory from "../../entity/balance.factory";
 import BalanceGateway from "../../gateway/balance_gateway";
+import { UseCase } from "../usecase.interface";
 import { InputUpdateBalanceDto, OutputUpdateBalanceDto } from "./update_balance.dto";
 
-export default class UpdateBalanceUseCase {
+export default class UpdateBalanceUseCase 
+    implements UseCase<InputUpdateBalanceDto, OutputUpdateBalanceDto> {
     private _balanceGateway: BalanceGateway
 
     constructor(balanceGateway: BalanceGateway) {
