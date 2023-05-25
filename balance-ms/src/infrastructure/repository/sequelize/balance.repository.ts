@@ -1,4 +1,5 @@
 import Balance from "../../../internal/entity/balance";
+import BalanceNotFoundError from "../../../internal/exception/balance_not_found.error";
 import BalanceGateway from "../../../internal/gateway/balance_gateway";
 import BalanceModel from "./balance.model";
 
@@ -14,7 +15,7 @@ export default class BalanceRepository implements BalanceGateway {
             });
             return new Balance(balanceModel.id, balanceModel.accountId, balanceModel.amount);
         } catch (error) {
-            throw new Error(`entity with account Id ${id} not found`);
+            throw new BalanceNotFoundError(`entity with account Id ${id} not found`);
         }
     }
 
