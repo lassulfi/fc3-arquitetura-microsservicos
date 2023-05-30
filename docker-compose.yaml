@@ -13,15 +13,17 @@ services:
       - mysql
 
   mysql:
-    image: mysql:5.7
+    build: .docker/mysql
+    container_name: digital-wallet-db
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: wallet
       MYSQL_PASSWORD: root
     ports:
       - 3306:3306
     volumes:
-      - .docker/mysql:/var/lib/mysql
+      - .docker/dbdata:/var/lib/mysql
+      - .docker/mysql:/docker-entrypoint-initdb.d
 
   zookeeper:
     image: "confluentinc/cp-zookeeper:6.1.0"

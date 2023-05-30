@@ -4,7 +4,7 @@ export interface InputFindBalanceByAccountIdDto {
 
 export interface OutputFindBalanceByAccountIdDto {
     id: string;
-    accountId: string;
+    account_id: string;
     balance: {
         amount: number;
     };

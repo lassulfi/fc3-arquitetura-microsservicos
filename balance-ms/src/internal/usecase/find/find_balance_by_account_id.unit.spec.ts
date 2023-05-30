@@ -27,7 +27,7 @@ describe("Unit test find by account id use case", () => {
 
         const expectedOutput = {
             id: "123",
-            accountId: "123",
+            account_id: "123",
             balance: {
                 amount: 10
             }

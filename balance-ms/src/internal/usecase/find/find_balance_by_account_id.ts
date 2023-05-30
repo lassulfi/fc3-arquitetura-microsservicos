@@ -16,7 +16,7 @@ export default class FindBalanceByAccountIdUseCase
         const balance = await this._balanceGateway.findByAccountId(accountId);
         return {
             id: balance.id,
-            accountId: balance.accountId,
+            account_id: balance.accountId,
             balance: {
                 amount: balance.amount
             }

@@ -5,10 +5,10 @@ import BalanceNotFoundError from "../../../internal/exception/balance_not_found.
 
 export const balanceRoute = express.Router();
 
-balanceRoute.get("/:account-id",async (req: Request, res: Response) => {
+balanceRoute.get("/:account_id", async (req: Request, res: Response) => {
     const usecase = new FindBalanceByAccountIdUseCase(new BalanceRepository());
     try {
-        const accountId = req.params["account-id"];
+        const accountId = req.params.account_id;
         const output = await usecase.execute({ accountId });
         res.status(200).send(output);
     } catch (error) {
@@ -16,9 +16,10 @@ balanceRoute.get("/:account-id",async (req: Request, res: Response) => {
             res.status(404).send({
                 message: error.message
             })
+        } else {
+            res.status(500).send({
+                message: "unexpected error"
+            });
         }
-        res.status(500).send({
-            message: "unexpected error"
-        })
     }
 });
