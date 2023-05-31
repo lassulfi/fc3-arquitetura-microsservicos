@@ -1,9 +1,44 @@
 import { bootstrap } from "./bootstrap";
+import { kafka, kafkaGroupId } from "./infrastructure/kafka/config";
+import { KafkaConsumer } from "./infrastructure/kafka/consumer";
+import BalanceRepository from "./infrastructure/repository/sequelize/balance.repository";
 import { setupDb } from "./infrastructure/repository/sequelize/setup";
 import { listen } from "./infrastructure/web/server";
+import UpdateBalanceUseCase from "./internal/usecase/update/update_balance";
 
-bootstrap();
 
-setupDb();
+(async () => {
+    console.log("loading .env")
+    bootstrap();
+    
+    console.log("setting up database")
+    await setupDb();
 
-listen();
+    console.log("setting up kafka consumer")
+    await setupKafkaConsumer();
+
+    console.log("starting webserver")
+    listen();
+})();
+
+async function setupKafkaConsumer() {
+    const consumer = kafka.consumer({
+        groupId: kafkaGroupId
+    });
+
+    const updateBalanceUseCase = new UpdateBalanceUseCase(new BalanceRepository());
+
+    const kafkaConsumer = new KafkaConsumer({
+        consumer,
+        topics: ['balances'],
+        useCase: updateBalanceUseCase
+    });
+
+    try {
+        console.log("connecting to kafka")
+        await kafkaConsumer.connect();
+    } catch (error) {
+        console.error;
+        await kafkaConsumer.disconnect();
+    }
+}

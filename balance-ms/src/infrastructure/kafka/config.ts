@@ -1,4 +1,8 @@
 import { Kafka, KafkaConfig } from 'kafkajs'
 
-const kafkaConfig: KafkaConfig = { brokers: ['localhost:29092'] }
+const brokers = process.env.KAFKA_BROKERS?.split(";") ||  ['localhost:29092'];
+
+export const kafkaGroupId = process.env.KAFKA_GROUPID || "wallet";
+
+const kafkaConfig: KafkaConfig = { brokers }
 export const kafka = new Kafka(kafkaConfig);

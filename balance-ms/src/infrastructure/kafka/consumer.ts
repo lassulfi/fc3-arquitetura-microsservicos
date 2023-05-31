@@ -10,8 +10,8 @@ type KafkaConsumerProps = {
 
 export class KafkaConsumer implements SimpleConsumer {
     private readonly _consumer: Consumer;
-    private _topics: string[];
-    private _useCase: UseCase<any, any>
+    private readonly _topics: string[];
+    private readonly _useCase: UseCase<any, any>
 
     constructor({consumer, topics, useCase}: KafkaConsumerProps) {
         this._consumer = consumer;
@@ -28,7 +28,7 @@ export class KafkaConsumer implements SimpleConsumer {
     }
 
     async handle({message}: EachMessagePayload): Promise<void> {
-         await this._useCase.execute(message);
+        await this._useCase.execute(message);
     }
 
     async disconnect(): Promise<void> {
