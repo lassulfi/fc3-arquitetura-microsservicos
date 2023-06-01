@@ -1,5 +1,6 @@
 
 import BalanceFactory from "../../entity/balance.factory";
+import BalanceNotFoundError from "../../exception/balance_not_found.error";
 import UpdateBalanceUseCase from "./update_balance";
 
 const balance = BalanceFactory.create("123");
@@ -49,7 +50,7 @@ describe("Unit test update balance use case", () => {
 
         const findByAccountIdSpy = jest
             .spyOn(balanceRepository, "findByAccountId")
-            .mockReturnValue(Promise.resolve(undefined));
+            .mockRejectedValue(new BalanceNotFoundError());
 
         const createSpy = jest.spyOn(balanceRepository, "create");
 

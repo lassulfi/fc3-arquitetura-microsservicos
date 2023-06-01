@@ -5,7 +5,7 @@ import { InputFindBalanceByAccountIdDto, OutputFindBalanceByAccountIdDto } from 
 export default class FindBalanceByAccountIdUseCase 
     implements UseCase<InputFindBalanceByAccountIdDto, OutputFindBalanceByAccountIdDto> {
 
-    private _balanceGateway: BalanceGateway
+    private readonly _balanceGateway: BalanceGateway
 
     constructor(balanceGateway: BalanceGateway) {
         this._balanceGateway = balanceGateway;

@@ -11,6 +11,17 @@ services:
     depends_on:
       - kafka
       - mysql
+  
+  balanceapp:
+    build:
+      context: balance-ms
+    volumes:
+      - ./balance-ms:/srv/app
+    ports:
+      - 3003:3003
+    depends_on:
+      - kafka
+      - mysql
 
   mysql:
     build: .docker/mysql

@@ -1,9 +1,9 @@
 import { Consumer } from "kafkajs";
 import { KafkaConsumer } from "./consumer";
 
-const MockUseCase = () => {
+const mockHandler = () => {
     return {
-        execute: jest.fn()
+        handle: jest.fn()
     }
 };
 
@@ -22,10 +22,10 @@ describe("Kakfa consumer unit test", () => {
     });
 
     it("should consume message from topic", async () => {
-        const useCase = MockUseCase();
+        const handler = mockHandler();
         const topics = getTopics();
 
-        const executeSpy = jest.spyOn(useCase, "execute");
+        const handleSpy = jest.spyOn(handler, "handle");
         const connectSpy = jest.spyOn(mockConsumer, 'connect');
         const subscribeSpy = jest.spyOn(mockConsumer, 'subscribe');
         const runSpy = jest.spyOn(mockConsumer, 'run').mockImplementation(async (config) => {
@@ -36,19 +36,19 @@ describe("Kakfa consumer unit test", () => {
         const kafkaConsumer = new KafkaConsumer({
             consumer: mockConsumer as Consumer,
             topics,
-            useCase
+            handler
         });
 
         await kafkaConsumer.connect();
 
-        expect(executeSpy).toHaveBeenCalled();
+        expect(handleSpy).toHaveBeenCalled();
         expect(connectSpy).toHaveBeenCalled();
         expect(subscribeSpy).toHaveBeenCalled();
         expect(runSpy).toHaveBeenCalled();
     });
 
     it("should disconnect", async () => {
-        const useCase = MockUseCase();
+        const handler = mockHandler();
         const topics = getTopics();
 
         const disconnectSpy = jest.spyOn(mockConsumer, "disconnect");
@@ -56,7 +56,7 @@ describe("Kakfa consumer unit test", () => {
         const kafkaConsumer = new KafkaConsumer({
             consumer: mockConsumer as Consumer,
             topics,
-            useCase
+            handler
         });
 
         await kafkaConsumer.disconnect();

@@ -1,22 +1,22 @@
 import { Consumer, EachMessagePayload } from "kafkajs";
 import { SimpleConsumer } from "./consumer.interface";
-import { UseCase } from "../../internal/usecase/usecase.interface";
+import { EventHandler } from "../../internal/events/handler/balance.handler";
 
 type KafkaConsumerProps = {
     consumer: Consumer,
     topics: string[],
-    useCase: UseCase<any, any>,
+    handler: EventHandler,
 }
 
 export class KafkaConsumer implements SimpleConsumer {
     private readonly _consumer: Consumer;
     private readonly _topics: string[];
-    private readonly _useCase: UseCase<any, any>
+    private readonly _handler: EventHandler
 
-    constructor({consumer, topics, useCase}: KafkaConsumerProps) {
+    constructor({consumer, topics, handler}: KafkaConsumerProps) {
         this._consumer = consumer;
         this._topics = topics;
-        this._useCase = useCase;
+        this._handler = handler;
     }
 
     async connect(): Promise<void> {
@@ -28,7 +28,9 @@ export class KafkaConsumer implements SimpleConsumer {
     }
 
     async handle({message}: EachMessagePayload): Promise<void> {
-        await this._useCase.execute(message);
+        console.log("message received with payload", message.value.toString());
+        const data = JSON.parse(message.value.toString());
+        await this._handler.handle(data);
     }
 
     async disconnect(): Promise<void> {

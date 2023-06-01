@@ -8,6 +8,7 @@
     "test:watch": "npm run tsc -- --noEmit && jest --watchAll",
     "jest:clear": "jest --clearCache",
     "tsc": "tsc",
+    "build": "tsc",
     "dev": "nodemon src/main.ts"
   },
   "keywords": [],

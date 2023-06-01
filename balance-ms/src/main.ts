@@ -4,6 +4,7 @@ import { KafkaConsumer } from "./infrastructure/kafka/consumer";
 import BalanceRepository from "./infrastructure/repository/sequelize/balance.repository";
 import { setupDb } from "./infrastructure/repository/sequelize/setup";
 import { listen } from "./infrastructure/web/server";
+import { BalanceEventHandler } from "./internal/events/handler/balance.handler";
 import UpdateBalanceUseCase from "./internal/usecase/update/update_balance";
 
 
@@ -27,11 +28,12 @@ async function setupKafkaConsumer() {
     });
 
     const updateBalanceUseCase = new UpdateBalanceUseCase(new BalanceRepository());
+    const updateBalanceHandler = new BalanceEventHandler(updateBalanceUseCase);
 
     const kafkaConsumer = new KafkaConsumer({
         consumer,
         topics: ['balances'],
-        useCase: updateBalanceUseCase
+        handler: updateBalanceHandler
     });
 
     try {
