@@ -10,6 +10,7 @@ export default class Balance {
     }
 
     updateAmount(amount: number): void {
+        console.log("[Balance] Updating amount", this._accountId, amount);
         this._amount = amount;
     }
 

@@ -14,6 +14,7 @@ export default class FindBalanceByAccountIdUseCase
     async execute(input: InputFindBalanceByAccountIdDto): Promise<OutputFindBalanceByAccountIdDto> {
         const { accountId } = input;
         const balance = await this._balanceGateway.findByAccountId(accountId);
+        console.log("[FindBalanceByIdUseCase] found balance", accountId, balance);
         return {
             id: balance.id,
             account_id: balance.accountId,

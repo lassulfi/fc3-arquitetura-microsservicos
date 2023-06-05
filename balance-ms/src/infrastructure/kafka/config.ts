@@ -1,6 +1,6 @@
 import { Kafka, KafkaConfig } from 'kafkajs'
 
-const brokers = process.env.KAFKA_BROKERS?.split(";") ||  ['localhost:9092'];
+const brokers = process.env.KAFKA_BROKERS?.split(";") ||  ['kafka:29092'];
 
 export const kafkaGroupId = process.env.KAFKA_GROUPID || "wallet";
 
