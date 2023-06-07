@@ -10,7 +10,10 @@ export default class BalanceModel extends Model {
     @Column
     declare id: string;
 
-    @Column({ allowNull: false })
+    @Column({ 
+        field: "account_id",
+        allowNull: false 
+    })
     declare accountId: string;
 
     @Column({ allowNull: false })
